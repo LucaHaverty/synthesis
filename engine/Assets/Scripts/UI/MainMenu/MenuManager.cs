@@ -8,5 +8,8 @@ namespace Synthesis.UI {
         public void ButtonPrint(string s) {
             Debug.Log("Button Pressed: " + s);
         }
+        public void QuitGame() {
+            Application.Quit();
+        }
     }
 }

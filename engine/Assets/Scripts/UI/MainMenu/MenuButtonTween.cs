@@ -11,8 +11,13 @@ using Synthesis.UI;
 [RequireComponent(typeof(Button))]
 public class MenuButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
 
-    public float IndicateScaleFactor = 1.1f;
-    public float ClickedScaleFactor = 0.98f;
+    // public float IndicateScaleFactor = 1.1f;
+    private float NormalX;
+    private float NormalY;
+
+    public static float IndicateExpansion = 10;
+    public static float ClickedContraction = 5;
+    // public float ClickedScaleFactor = 0.98f;
     private float _completionTime = 0.2f;
     private Button _button;
 
@@ -25,11 +30,22 @@ public class MenuButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private Action<ITween<Vector3>> updateButtonScale;
 
+    private Vector3 _indicateScale {
+        get => new Vector3((NormalX + IndicateExpansion) / NormalX, (NormalY + IndicateExpansion) / NormalY, 1f);
+    }
+    private Vector3 _clickedScale {
+        get => new Vector3((NormalX - ClickedContraction) / NormalX, (NormalY - ClickedContraction) / NormalY, 1f);
+    }
+
     public void Start() {
         _button = GetComponent<Button>();
         updateButtonScale = t => {
             gameObject.transform.localScale = t.CurrentValue;
         };
+
+        var rect = GetComponent<RectTransform>().rect;
+        NormalX = rect.width / 2;
+        NormalY = rect.height / 2;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -38,16 +54,14 @@ public class MenuButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExit
         TweenFactory.RemoveTweenKey(gameObject.name + CLICKED_TWEEN, TweenStopBehavior.DoNotModify);
         TweenFactory.RemoveTweenKey(gameObject.name + RETURN_TWEEN, TweenStopBehavior.DoNotModify);
         // transform.GetComponent<Image>().
-        _activeTween = gameObject.Tween(gameObject.name + INDICATE_TWEEN, gameObject.transform.localScale, Vector3.one * IndicateScaleFactor, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale);
+        _activeTween = gameObject.Tween(gameObject.name + INDICATE_TWEEN, gameObject.transform.localScale, _indicateScale, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale);
     }
     public void OnPointerExit(PointerEventData eventData) {
         _state = "exit";
         TweenFactory.RemoveTweenKey(gameObject.name + INDICATE_TWEEN, TweenStopBehavior.DoNotModify);
         if (_activeTween.State == TweenState.Running && _activeTween.Key.Equals(gameObject.name + CLICKED_TWEEN)) {
-            Debug.Log("YT");
-            _activeTween.ContinueWith(new Vector3Tween().Setup(Vector3.one * ClickedScaleFactor, Vector3.one, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale));
+            _activeTween.ContinueWith(new Vector3Tween().Setup(_clickedScale, Vector3.one, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale));
         } else {
-        // transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
             _activeTween = gameObject.Tween(gameObject.name + RETURN_TWEEN, gameObject.transform.localScale, Vector3.one, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale);
         }
     }
@@ -58,7 +72,7 @@ public class MenuButtonTween : MonoBehaviour, IPointerEnterHandler, IPointerExit
             gameObject.transform.localScale = Vector3.one;
         }
         TweenFactory.RemoveTweenKey(gameObject.name + INDICATE_TWEEN, TweenStopBehavior.DoNotModify);
-        _activeTween = gameObject.Tween(gameObject.name + CLICKED_TWEEN, gameObject.transform.localScale, Vector3.one * ClickedScaleFactor, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale, x => {
+        _activeTween = gameObject.Tween(gameObject.name + CLICKED_TWEEN, gameObject.transform.localScale, _clickedScale, _completionTime, TweenScaleFunctions.CubicEaseOut, updateButtonScale, x => {
             if (!_state.Equals("exit"))
                 OnPointerEnter(null);
         });
