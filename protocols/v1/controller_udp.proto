@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package SynthesisAPI.Proto;
+
+import "controller.proto";
+
+/// Please note: This is not made for security - Hunter
+message UDPMessage {
+    oneof message {
+        ErrorResponse error_response = 1;
+        AccessRequest access_request = 2;
+        AccessResponse access_response = 3;
+        ReadSignalsRequest read_signals_request = 4;
+        ReadSignalsResponse read_signals_response = 5;
+        WriteSignalsRequest write_signals_request = 6;
+        WriteSignalsResponse write_signals_response = 7;
+        ActiveRobotRequest active_robot_request = 8;
+        ActiveRobotResponse active_robot_response = 9;
+        IDRequest id_request = 10;
+        IDResponse id_response = 11;
+    }
+}
+
+message IDRequest { }
+
+message IDResponse {
+    string id = 1;
+}
+
+message ActiveRobotRequest { }
+
+message ActiveRobotResponse {
+    string sim_object_id = 1;
+}
+
+message AccessRequest {
+    string sim_object_id = 2;
+}
+
+message AccessResponse {
+    string id = 1;
+    bool approved = 2;
+}
+
+message ReadSignalsRequest {
+    string id = 1;
+    repeated string signal_ids = 3;
+}
+
+message ReadSignalsResponse {
+    UpdateSignals signals = 1;
+}
+
+message WriteSignalsRequest {
+    string id = 1;
+    UpdateSignals signals = 2;
+}
+
+message WriteSignalsResponse { }
+
+enum ErrorType {
+    Other = 0;
+    AccessError = 1;
+}
+
+message ErrorResponse {
+    ErrorType type = 1;
+    string message = 2;
+}
