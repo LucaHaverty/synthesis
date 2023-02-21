@@ -110,6 +110,8 @@ public static class MainHUD {
             icon: SynthesisAssetCollection.GetSpriteByName("rio-config-icon")
         );
 
+        MainHUD.AddItemToDrawer("Test", b => DynamicUIManager.CreatePanel<RobotDetailsPanel>(false));
+
         if (!_hasNewRobotListener) {
             EventBus.NewTypeListener<RobotSimObject.NewRobotEvent>(e => {
                 var robotEvent = e as RobotSimObject.NewRobotEvent;

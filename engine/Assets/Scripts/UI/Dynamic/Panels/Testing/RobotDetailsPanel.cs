@@ -29,6 +29,8 @@ namespace Synthesis.UI.Dynamic {
             Y = MainContent.CreateLabel(15f).ApplyTemplate(nonHighlightedLabel).SetTopStretch(leftPadding: 10f, anchoredY: 30f).SetText("Y: 0.0");
             Z = MainContent.CreateLabel(15f).ApplyTemplate(nonHighlightedLabel).SetTopStretch(leftPadding: 10f, anchoredY: 45f).SetText("Z: 0.0");
         
+            var container = new ScreenspaceMarkerContainer(MainContent.CreateSubContent(new Vector3(100, 100)));
+
             return true;
         }
 
