@@ -13,7 +13,11 @@ namespace Synthesis.UI.Dynamic {
             img.SetSprite(SynthesisAssetCollection.GetSpriteByName("250r-rounded"));
             img.SetColor(Color.cyan);
             var rectParent = RootRectTransform.GetComponent<RectTransform>();
-            RootRectTransform.position = new Vector3(rectParent.sizeDelta.x / 2, rectParent.sizeDelta.y / 2);
+
+            SetPosition(new Vector2(0, 0));
+            
+            // rootObject.transform.localPosition = new Vector3(0, 0); // Works, is centered around center
+            // RootRectTransform.anchoredPosition = new Vector2(1920 / 2, 1080 / 2); // Does the same thing as the one above
         }
 
         public void SetPosition(Vector2 pos) {

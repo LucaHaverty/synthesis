@@ -13,10 +13,7 @@ namespace Synthesis.UI.Dynamic {
 
             var rect = GameObject.Find("UI").transform.Find("ScreenSpace").GetComponent<RectTransform>();
             RootGameObject.transform.parent = rect;
-            rect.anchorMin = new Vector2(0, 0);
-            rect.anchorMax = new Vector2(1, 1);
-            rect.offsetMin = new Vector2(0, 0);
-            rect.offsetMax = new Vector2(1, 1);
+            base.SetStretch<Content>();
 
             var m = CreateMarker();
             // m.SetPosition(new Vector2(0, 0));
