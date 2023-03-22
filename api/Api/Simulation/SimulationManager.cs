@@ -20,55 +20,25 @@ namespace SynthesisAPI.Simulation {
         public static event UpdateDelegate OnDriverUpdate;
         public static event UpdateDelegate OnBehaviourUpdate;
 
-        // TODO: Switch to using guids cuz all the signals have the same name
-        public static Dictionary<string, List<Driver>>       Drivers    = new Dictionary<string, List<Driver>>();
-        public static Dictionary<string, List<SimBehaviour>> Behaviours = new Dictionary<string, List<SimBehaviour>>();
-
         public static void Update() {
-            Drivers.ForEach(x => x.Value.ForEach(y => y.Update()));
-            if (OnDriverUpdate != null)
-                OnDriverUpdate();
-            Behaviours.ForEach(x => {
-                if (_simObjects[x.Key].BehavioursEnabled)
-                    x.Value.Where(y => y.Enabled).ForEach(y => y.Update());
+            _simObjects.ForEach(x => {
+                x.Value.Drivers.ForEach(y => {
+                    y.Update();
+                });
+                if (OnDriverUpdate != null)
+                    OnDriverUpdate();
+                x.Value.Behaviours.ForEach(y => {
+                    y.Update();
+                });
+                if (OnBehaviourUpdate != null)
+                    OnBehaviourUpdate();
             });
-            if (OnBehaviourUpdate != null)
-                OnBehaviourUpdate();
-            // _drivers.ForEach(x => x.Update());
-        }
-
-        public static void AddDriver(string simObjectName, Driver d)
-        {
-            if (!Drivers.ContainsKey(simObjectName))
-            {
-                Drivers[simObjectName] = new List<Driver>();
-            }
-            Drivers[simObjectName].Add(d);
-        }
-
-        public static void AddBehaviour(string simObjectName, SimBehaviour d)
-        {
-            if (!Behaviours.ContainsKey(simObjectName))
-            {
-                Behaviours[simObjectName] = new List<SimBehaviour>();
-            }
-            Behaviours[simObjectName].Add(d);
-        }
-
-        public static void RemoveDriver(string simObjectName, Driver d)
-        {
-            if (Drivers.ContainsKey(simObjectName))
-            {
-                Drivers[simObjectName].RemoveAll(x => x == d);
-            }
         }
 
         public static void RegisterSimObject(SimObject so) {
             if (_simObjects.ContainsKey(so.Name)) // Probably use some GUID
                 throw new Exception("Name already exists");
             _simObjects[so.Name] = so;
-            Drivers[so.Name] = new List<Driver>();
-            Behaviours[so.Name] = new List<SimBehaviour>();
 
             if (OnNewSimulationObject != null)
                 OnNewSimulationObject(so);
@@ -82,8 +52,8 @@ namespace SynthesisAPI.Simulation {
             bool exists = _simObjects.TryGetValue(so, out SimObject s);
             if (!exists)
                 return false;
-            Drivers.Remove(so);
-            Behaviours.Remove(so);
+            s.RemoveDrivers();
+            s.RemoveBehaviours();
             var res = _simObjects.Remove(so);
             if (res) {
                 s.Destroy();
