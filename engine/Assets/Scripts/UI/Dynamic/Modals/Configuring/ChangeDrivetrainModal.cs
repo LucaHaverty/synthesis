@@ -16,7 +16,10 @@ public class ChangeDrivetrainModal : ModalDynamic {
     public override void Create() {
         Title.SetText("Change Drivetrain");
 
-        AcceptButton.AddOnClickedEvent(b => {
+        if (RobotSimObject.GetCurrentlyPossessedRobot() == null)
+            return;
+        AcceptButton.AddOnClickedEvent(b =>
+        {
             RobotSimObject.GetCurrentlyPossessedRobot().ConfiguredDrivetrainType = _selectedType;
             DynamicUIManager.CloseActiveModal();
         });
