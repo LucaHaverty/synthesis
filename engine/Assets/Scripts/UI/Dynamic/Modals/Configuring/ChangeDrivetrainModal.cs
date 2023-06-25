@@ -66,13 +66,24 @@ public class ChangeDrivetrainModal : ModalDynamic {
         else
         {
             AcceptButton.ApplyTemplate(DisableButton);
-            Description.SetText("Spawn a robot to change it's drivetrain");
+            Description.SetText("Spawn or select a robot to change it's drivetrain");
             
             var spacing = 15f;
-            var button = MainContent.CreateButton("Spawn Robot")
+            (var left, var right) = MainContent.SplitLeftRight((MainContent.Size.x / 2f) - (spacing / 2f), spacing);
+            
+            left.CreateButton("Spawn Robot")
                 .ApplyTemplate<Button>(VerticalLayout)
                 .AddOnClickedEvent(b => DynamicUIManager.CreateModal<AddRobotModal>())
                 .StepIntoLabel(l => l.SetText("Spawn Robot"));
+
+            right.CreateButton("SelectRobot")
+                .ApplyTemplate<Button>(VerticalLayout)
+                .AddOnClickedEvent(b =>
+                {                    
+                    DynamicUIManager.CloseActiveModal();
+                    DynamicUIManager.CreatePanel<RobotSwitchPanel>();
+                })
+                .StepIntoLabel(l => l.SetText("Select Robot"));
         }
     }
     public override void Update() { }
