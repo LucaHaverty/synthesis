@@ -120,6 +120,8 @@ namespace Synthesis.Import {
 		        if (dynamicLayers.Count == 0)
 			        throw new Exception("No more dynamic layers");
 		        dynamicLayer = dynamicLayers.Dequeue();
+		        
+		        assemblyContainer.layer = dynamicLayer;
 		        assemblyContainer.AddComponent<DynamicLayerReserver>();
 	        }
 
